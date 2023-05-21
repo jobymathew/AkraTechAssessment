@@ -8,8 +8,12 @@ const App: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    fetchData();
-    fetchTotalCount();
+    const fetchDataAndTotalCount = async () => {
+      await fetchData();
+      await fetchTotalCount();
+    };
+  
+    fetchDataAndTotalCount();
   }, []);
 
   const fetchData = async () => {
@@ -20,9 +24,17 @@ const App: React.FC = () => {
   };
 
   const fetchTotalCount = async () => {
-    const count = await db.meta.get('count');
-    if (count) {
-      setTotalCount(count.value);
+    try {
+      const count = await db.meta.get('count');
+  
+      if (count) {
+        setTotalCount(count.value);
+      } else {
+        setTotalCount(0);
+      }
+    } catch (error) {
+      console.error('Error fetching total count:', error);
+      setTotalCount(0);
     }
   };
 
